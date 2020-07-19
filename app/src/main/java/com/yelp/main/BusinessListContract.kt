@@ -6,9 +6,9 @@ internal interface BusinessListContract {
     interface View {
         fun showSpinner()
         fun hideSpinner()
-        fun showBusiness(business: List<BusinessData>)
-        fun refresh(restaurants: List<BusinessData>)
-        val isRefreshing: Boolean
+        fun showBusiness(businessList: List<BusinessData>)
+        fun refresh(businessList: List<BusinessData>)
+        var isRefreshing: Boolean
         fun showError(message: String?)
         fun showNetError()
     }

@@ -14,4 +14,8 @@ data class BusinessData(
         Timber.e("Reviews? " + review)
         this.review = review
     }
+
+    fun getReview(): String {
+        return review
+    }
 }

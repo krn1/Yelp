@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.yelp.R
 import com.yelp.app.YelpApp
 import com.yelp.app.utils.AlertUtil
+import com.yelp.app.utils.KeyBoardUtil
+import com.yelp.app.utils.PaginationListenerUtil
 import com.yelp.model.BusinessData
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -19,19 +22,24 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
     lateinit var presenter: BusinessListPresenter
 
     var search: String = ""
+    private lateinit var adapter: BusinessListAdapter
     // region lifecycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        getComponent().inject(this)
+
         setupToolbar()
+        setupRecycleView()
         searchBtn.setOnClickListener {
             if (validateInput()) {
+                KeyBoardUtil.hideSoftKeyBoard(this, searchParam)
                 search = searchParam.text.toString()
                 presenter.loadFirstPage(search)
             }
         }
-        getComponent().inject(this)
     }
 
     override fun onBackPressed() {
@@ -73,12 +81,12 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
 
     private fun showBackButton(showBack: Boolean) {
         if (showBack) {
-            toolbar.setNavigationIcon(getDrawable(R.drawable.abc_ic_ab_back_material))
-            toolbar.setNavigationOnClickListener { toolbar -> onBackPressed() }
+            toolbar.navigationIcon = getDrawable(R.drawable.abc_ic_ab_back_material)
+            toolbar.setNavigationOnClickListener { onBackPressed() }
             toolbar.title = search
 
         } else {
-            toolbar.setNavigationIcon(null)
+            toolbar.navigationIcon = null
             toolbar.title = getString(R.string.app_name)
         }
     }
@@ -86,8 +94,38 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
     private fun initUI() {
         searchContainer.visibility = View.VISIBLE
         errContainer.visibility = View.GONE
-
+        list.visibility = View.GONE
     }
+
+    private fun setupRecycleView() {
+        searchContainer.visibility = View.VISIBLE
+        list.visibility = View.VISIBLE
+        errContainer.setVisibility(View.GONE)
+        adapter = BusinessListAdapter()
+        list.setAdapter(adapter)
+        val layoutManager =
+            list.getLayoutManager() as LinearLayoutManager
+        list.addOnScrollListener(object :
+            PaginationListenerUtil(layoutManager, pullToRefresh) {
+            override fun loadNextPage() {
+                if (!isLoading()) {
+                    presenter.loadMorePages(search)
+                }
+            }
+        })
+        pullToRefresh.setColorSchemeColors(resources.getColor(R.color.colorAccent))
+        pullToRefresh.setOnRefreshListener({ refreshFeed() })
+    }
+
+    private fun isLoading(): Boolean {
+        return progressBar.visibility === View.VISIBLE
+    }
+
+    private fun refreshFeed() {
+        pullToRefresh.setRefreshing(true)
+        pullToRefresh.postDelayed({ presenter.loadFirstPage(search) }, 1000)
+    }
+
     // endregion
 
     // region View
@@ -102,18 +140,24 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
     override fun showBusiness(businessList: List<BusinessData>) {
         errContainer.visibility = View.GONE
         searchContainer.visibility = View.GONE
-
+        list.visibility = View.VISIBLE
         showBackButton(true)
 
         Timber.e("Business Data Size: " + businessList.size)
+        adapter.loadPage(businessList)
+        pullToRefresh.isRefreshing = false
+
     }
 
-    override fun refresh(restaurants: List<BusinessData>) {
-        TODO("Not yet implemented")
+
+    override fun refresh(businessList: List<BusinessData>) {
+        pullToRefresh.isRefreshing = false
+        adapter.refresh(businessList)
+        errContainer.visibility = View.GONE
+        searchContainer.visibility = View.GONE
     }
 
-    override val isRefreshing: Boolean
-        get() = TODO("Not yet implemented")
+    override var isRefreshing = false
 
     override fun showError(message: String?) {
         errContainer.visibility = View.VISIBLE

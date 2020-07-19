@@ -76,7 +76,7 @@ class BusinessListPresenter @Inject internal constructor(
                         return
                     }
 
-                    Timber.e("Business Result Size: " + businesses.size)
+                    Timber.d("Business Result Size: " + businesses.size)
                     val results: MutableList<BusinessData> = mutableListOf()
                     for (business in businesses) {
                         val businessData = BusinessData(
