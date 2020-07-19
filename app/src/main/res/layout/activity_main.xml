@@ -92,8 +92,8 @@
             android:id="@+id/errContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginTop="@dimen/edit_main_margin"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/searchContainer">
@@ -129,11 +129,23 @@
                 app:layout_constraintTop_toBottomOf="@+id/errImage" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- Spinning Progressbar-->
-        <!--        <include-->
-        <!--            android:id="@+id/progressBar"-->
-        <!--            layout="@layout/include_progress_bar" />-->
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--   Spinning Progressbar-->
+    <FrameLayout
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@color/light_grey_transparent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal" />
+
+    </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -10,10 +10,11 @@ internal interface BusinessListContract {
         fun refresh(restaurants: List<BusinessData>)
         val isRefreshing: Boolean
         fun showError(message: String?)
+        fun showNetError()
     }
 
     interface Presenter {
-        fun loadFirstPage(searchParam:String)
-        fun loadMorePages(searchParam:String)
+        fun loadFirstPage(searchParam: String)
+        fun loadMorePages(searchParam: String)
     }
 }

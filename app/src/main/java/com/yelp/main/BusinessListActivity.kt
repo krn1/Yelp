@@ -9,6 +9,7 @@ import com.yelp.app.YelpApp
 import com.yelp.app.utils.AlertUtil
 import com.yelp.model.BusinessData
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -45,7 +46,6 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
 
     private fun validateInput(): Boolean {
         if (TextUtils.isEmpty(searchParam.text.toString())) {
-           // showError(getString(R.string.empty_list))
             AlertUtil.toastUser(this, "You are searching with out any Keyword!")
             return false
         }
@@ -55,16 +55,18 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
 
     // region View
     override fun showSpinner() {
-
+        progressBar.visibility = View.VISIBLE
     }
 
     override fun hideSpinner() {
-
+        progressBar.visibility = View.GONE
     }
 
-    override fun showBusiness(business: List<BusinessData>) {
+    override fun showBusiness(businessList: List<BusinessData>) {
         errContainer.visibility = View.GONE
-        TODO("Not yet implemented")
+        searchContainer.visibility = View.GONE
+
+        Timber.e("Business Data Size: " + businessList.size)
     }
 
     override fun refresh(restaurants: List<BusinessData>) {
@@ -84,6 +86,9 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
         }
     }
 
-    // endregion
+    override fun showNetError() {
+        showError(getString(R.string.network_error))
+    }
 
+    // endregion
 }
