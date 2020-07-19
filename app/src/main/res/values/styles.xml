@@ -16,4 +16,58 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+<!--    ADDING BELOW-->
+
+    <!-- Base application theme. -->
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
+    <!-- Progress Bar theme. -->
+    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminate">true</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:theme">@style/BaseAppTheme</item>
+    </style>
+
+    <style name="Default.ToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">17.4sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_gravity">start</item>
+    </style>
+
+    <style name="Item.normal" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/medium_dark_grey</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Item.bold" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:ellipsize">none</item>
+        <item name="android:layout_marginBottom">1dp</item>
+    </style>
+    <style name="Item.body" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:ellipsize">none</item>
+
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">@color/medium_grey</item>
+    </style>
+
+
 </resources>

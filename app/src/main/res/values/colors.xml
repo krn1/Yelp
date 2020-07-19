@@ -3,4 +3,18 @@
     <color name="colorPrimary">#c41200</color>
     <color name="colorPrimaryDark">#c62400</color>
     <color name="colorAccent">#3700B3</color>
+
+<!--    <color name="colorPrimary">#FF5722</color>-->
+<!--    <color name="colorPrimaryLight">#FFCCBC</color>-->
+<!--    <color name="colorPrimaryDark">#DD2C00</color>-->
+    <color name="blood_red">#c9837f</color>
+    <color name="white">@android:color/white</color>
+    <color name="black_trans">#80222222</color>
+    <color name="grey">#dddddd</color>
+    <color name="medium_dark_grey">#bdbdbd</color>
+    <color name="light_grey_transparent">#aaeeeeee</color>
+    <color name="black">#222222</color>
+    <color name="darker_grey">#888888</color>
+    <color name="light_white">#ffffff</color>
+    <color name="medium_grey">#eeeeee</color>
 </resources>

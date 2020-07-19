@@ -1,6 +1,6 @@
 package com.yelp.main
 
-import android.util.Log
+import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
 import com.yelp.app.scope.PerActivity
 import com.yelp.fusion.client.connection.YelpFusionApi
@@ -11,8 +11,11 @@ import com.yelp.model.BusinessData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.ArrayList
+import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
+import kotlin.collections.set
 
 @PerActivity
 class BusinessListPresenter @Inject internal constructor(
@@ -30,14 +33,16 @@ class BusinessListPresenter @Inject internal constructor(
         this.yelpFusionApi = apiService
     }
 
-    override fun loadFirstPage() {
+    override fun loadFirstPage(searchParam: String) {
+        Timber.e("Searching for "+searchParam)
         pageOffset = PAGE_SIZE
-        loadMorePages()
+        loadMorePages(searchParam)
     }
 
-    override fun loadMorePages() {
+    override fun loadMorePages(searchParam: String) {
         view.showSpinner()
-        fetch("indian food", "40.581140", "-111.914184")
+        fetch(searchParam, "34.068921", "-118.4451811")
+        //  fetch("indian food", "40.581140", "-111.914184")
     }
 
 
@@ -46,10 +51,9 @@ class BusinessListPresenter @Inject internal constructor(
         private val PAGE_SIZE = 15
     }
 
-
-    private fun fetch(term: String, lat: String, long: String): List<BusinessData> {
+    private fun fetch(searchParam: String, lat: String, long: String): List<BusinessData> {
         val params: MutableMap<String, String> = HashMap()
-        params["term"] = "indian food"
+        params["term"] = searchParam
         params["latitude"] = "40.581140"
         params["longitude"] = "-111.914184"
         params.put("limit", pageOffset.toString())
@@ -78,7 +82,7 @@ class BusinessListPresenter @Inject internal constructor(
                             )
                         )
 
-                        Log.e("Serach", "Business Data: " + business.imageUrl)
+                        Timber.e("Business Data: " + business.imageUrl)
                     }
 
                 }
@@ -87,7 +91,7 @@ class BusinessListPresenter @Inject internal constructor(
                     call: Call<SearchResponse>,
                     t: Throwable
                 ) {
-                    Log.e("Search", "ERR: " + t.localizedMessage)
+                    Timber.e("ERR: " + t.localizedMessage)
                 }
             }
 
@@ -105,12 +109,14 @@ class BusinessListPresenter @Inject internal constructor(
                 response: Response<Reviews?>
             ) {
                 val reviews = response.body()
-                Log.e("Review", "Top Review: " + reviews!!.reviews.get(0).text)
+                Timber.e("Top Review: " + reviews!!.reviews.size)
                 result = reviews.reviews.get(0).text
             }
 
+            @SuppressLint("LogNotTimber")
             override fun onFailure(call: Call<Reviews?>, t: Throwable) {
-                // HTTP error happened, do something to handle it.
+                Timber.e("Something went wrong. " + t.message)
+                view.showError(t.message)
             }
         }
         call.enqueue(callback)

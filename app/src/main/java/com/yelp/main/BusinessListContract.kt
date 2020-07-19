@@ -13,9 +13,7 @@ internal interface BusinessListContract {
     }
 
     interface Presenter {
-//        fun start()
-//        fun stop()
-        fun loadFirstPage()
-        fun loadMorePages()
+        fun loadFirstPage(searchParam:String)
+        fun loadMorePages(searchParam:String)
     }
 }

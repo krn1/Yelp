@@ -2,8 +2,6 @@ package com.yelp.main
 
 import com.yelp.app.ApplicationComponent
 import com.yelp.app.scope.PerActivity
-import com.yelp.fusion.client.connection.YelpFusionApi
-import com.yelp.repository.NetworkModule
 import dagger.Component
 
 @PerActivity
