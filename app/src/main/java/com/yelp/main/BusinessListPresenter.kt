@@ -1,11 +1,9 @@
-package com.yelp
+package com.yelp.main
 
-import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import com.yelp.fusion.client.connection.YelpFusionApiFactory
+import androidx.annotation.VisibleForTesting
+import com.yelp.app.scope.PerActivity
+import com.yelp.fusion.client.connection.YelpFusionApi
 import com.yelp.fusion.client.models.Business
 import com.yelp.fusion.client.models.Reviews
 import com.yelp.fusion.client.models.SearchResponse
@@ -13,35 +11,48 @@ import com.yelp.model.BusinessData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.set
+import java.util.ArrayList
+import javax.inject.Inject
 
+@PerActivity
+class BusinessListPresenter @Inject internal constructor(
+    view: BusinessListContract.View,
+    apiService: YelpFusionApi
+) : BusinessListContract.Presenter {
+    private val view: BusinessListContract.View
+    private val yelpFusionApi: YelpFusionApi
 
-class MainActivity : AppCompatActivity() {
+    @VisibleForTesting
+    var pageOffset = 50
 
-    val apiFactory = YelpFusionApiFactory()
-    val yelpFusionApi = apiFactory.createAPI("y71yZBsubF0HQh8mwL2-09ojQVq_ikpyf7kM8YbVeTJHI9ZnegD8mjQKppxy1YOFZae1M2hw_wgMWzS7-tx8WdBHFeyS2pvYQWQumphXoZi_c-bcO5m0MDszvVoTX3Yx")
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
-
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
-        yelp()
+    init {
+        this.view = view
+        this.yelpFusionApi = apiService
     }
 
-    private fun yelp(): List<BusinessData> {
+    override fun loadFirstPage() {
+        pageOffset = PAGE_SIZE
+        loadMorePages()
+    }
+
+    override fun loadMorePages() {
+        view.showSpinner()
+        fetch("indian food", "40.581140", "-111.914184")
+    }
+
+
+    companion object {
+        @VisibleForTesting
+        private val PAGE_SIZE = 15
+    }
+
+
+    private fun fetch(term: String, lat: String, long: String): List<BusinessData> {
         val params: MutableMap<String, String> = HashMap()
         params["term"] = "indian food"
         params["latitude"] = "40.581140"
         params["longitude"] = "-111.914184"
-        params.put("limit", "50")
+        params.put("limit", pageOffset.toString())
 
         val results: List<BusinessData> =
             ArrayList()
@@ -67,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
 
-                        Log.e("Serach","Business Data: "+business.imageUrl)
+                        Log.e("Serach", "Business Data: " + business.imageUrl)
                     }
 
                 }
@@ -76,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     call: Call<SearchResponse>,
                     t: Throwable
                 ) {
-                   Log.e("Search","ERR: "+t.localizedMessage)
+                    Log.e("Search", "ERR: " + t.localizedMessage)
                 }
             }
 
@@ -86,7 +97,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun yelpReview(id: String?): String {
-        val call: Call<Reviews> = yelpFusionApi.getBusinessReviews(id,"en_US")
+        val call: Call<Reviews> = yelpFusionApi.getBusinessReviews(id, "en_US")
         var result = "--"
         val callback: Callback<Reviews> = object : Callback<Reviews> {
             override fun onResponse(
@@ -94,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                 response: Response<Reviews?>
             ) {
                 val reviews = response.body()
-                Log.e("Review","Top Review: "+reviews!!.reviews.get(0).text)
+                Log.e("Review", "Top Review: " + reviews!!.reviews.get(0).text)
                 result = reviews.reviews.get(0).text
             }
 
@@ -106,6 +117,4 @@ class MainActivity : AppCompatActivity() {
 
         return result
     }
-
-
 }
