@@ -18,19 +18,31 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
     @Inject
     lateinit var presenter: BusinessListPresenter
 
+    var search: String = ""
     // region lifecycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
-
+        setupToolbar()
         searchBtn.setOnClickListener {
             if (validateInput()) {
-                presenter.loadFirstPage(searchParam.text.toString())
+                search = searchParam.text.toString()
+                presenter.loadFirstPage(search)
             }
         }
         getComponent().inject(this)
+    }
+
+    override fun onBackPressed() {
+        if (toolbar.title.equals(getString(R.string.app_name))) {
+
+            super.onBackPressed()
+        } else {
+
+            showBackButton(false)
+            initUI()
+        }
     }
 
     // endregion
@@ -51,6 +63,31 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
         }
         return true
     }
+
+    private fun setupToolbar() {
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        actionBar?.setDisplayShowTitleEnabled(true)
+        showBackButton(false)
+    }
+
+    private fun showBackButton(showBack: Boolean) {
+        if (showBack) {
+            toolbar.setNavigationIcon(getDrawable(R.drawable.abc_ic_ab_back_material))
+            toolbar.setNavigationOnClickListener { toolbar -> onBackPressed() }
+            toolbar.title = search
+
+        } else {
+            toolbar.setNavigationIcon(null)
+            toolbar.title = getString(R.string.app_name)
+        }
+    }
+
+    private fun initUI() {
+        searchContainer.visibility = View.VISIBLE
+        errContainer.visibility = View.GONE
+
+    }
     // endregion
 
     // region View
@@ -65,6 +102,8 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
     override fun showBusiness(businessList: List<BusinessData>) {
         errContainer.visibility = View.GONE
         searchContainer.visibility = View.GONE
+
+        showBackButton(true)
 
         Timber.e("Business Data Size: " + businessList.size)
     }
