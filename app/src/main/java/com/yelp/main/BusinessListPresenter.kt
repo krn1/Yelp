@@ -18,14 +18,10 @@ class BusinessListPresenter @Inject internal constructor(
     private val view: BusinessListContract.View,
     apiService: YelpFusionApi
 ) : BusinessListContract.Presenter {
-    private val yelpFusionApi: YelpFusionApi
+    private val yelpFusionApi: YelpFusionApi = apiService
 
     @VisibleForTesting
-    var pageOffset = 5
-
-    init {
-        this.yelpFusionApi = apiService
-    }
+    var pageOffset = PAGE_SIZE
 
     companion object {
         @VisibleForTesting
@@ -52,8 +48,8 @@ class BusinessListPresenter @Inject internal constructor(
     private fun fetch(searchParam: String) {
         val params: MutableMap<String, String> = HashMap()
         params.put("term", searchParam)
-        params.put("latitude", "40.581140")
-        params.put("longitude", "-111.914184")
+        params.put("latitude", "34.068921")
+        params.put("longitude", "-118.4451811")
         params.put("offset", pageOffset.toString())
 
         val call: Call<SearchResponse> = yelpFusionApi.getBusinessSearch(params)
@@ -65,9 +61,7 @@ class BusinessListPresenter @Inject internal constructor(
                     response: Response<SearchResponse>
                 ) {
                     val searchResponse = response.body()
-                    val businesses: List<Business> = searchResponse.businesses
-
-                    view.hideSpinner()
+                    val businesses: List<Business> = searchResponse!!.businesses
 
                     Timber.d("Business Result Size: " + businesses.size)
                     val results: MutableList<BusinessData> = mutableListOf()
@@ -108,8 +102,8 @@ class BusinessListPresenter @Inject internal constructor(
         var result = "--"
         val callback: Callback<Reviews> = object : Callback<Reviews> {
             override fun onResponse(
-                call: Call<Reviews?>,
-                response: Response<Reviews?>
+                call: Call<Reviews>,
+                response: Response<Reviews>
             ) {
                 val reviews = response.body()
                 if (!reviews!!.reviews.isNullOrEmpty()) {
