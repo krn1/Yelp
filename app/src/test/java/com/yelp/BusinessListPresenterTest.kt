@@ -43,6 +43,29 @@ class BusinessListPresenterTest {
     fun emptyBusinessListTest() {
         // Given
         val searchResponse = searchResponse(0)
+        val reviews = buildReviews(0)
+        val searchCall: retrofit2.Call<SearchResponse> = Calls.response(searchResponse)
+        val searchKey = "bla"
+        val reviewResponse: retrofit2.Call<Reviews> = Calls.response(reviews)
+        val businessDataList = buildBusinessDataList(searchResponse)
+
+        Mockito.`when`(yelpFusionApi.getBusinessSearch(getSearchParams(searchKey))).thenReturn(searchCall)
+      //  Mockito.`when`(yelpFusionApi.getBusinessReviews(any(), eq("en_US"))).thenReturn(reviewResponse)
+
+        // When
+        presenter.loadFirstPage(searchKey)
+
+        // Then
+
+        Mockito.verify(view, VerificationModeFactory.times(1)).showError(null)
+    }
+
+
+    @Test
+    @Throws(Exception::class)
+    fun loadFirstPageTest() {
+        // Given
+        val searchResponse = searchResponse(1)
         val reviews = buildReviews(1)
         val searchCall: retrofit2.Call<SearchResponse> = Calls.response(searchResponse)
         val searchKey = "bla"
@@ -57,112 +80,37 @@ class BusinessListPresenterTest {
 
         // Then
 
-        Mockito.verify(view, VerificationModeFactory.times(1)).showError(null)
+        Mockito.verify(view, VerificationModeFactory.times(1)).showSpinner()
+        Mockito.verify(view, VerificationModeFactory.times(1)).hideSpinner()
+        Mockito.verify(view, VerificationModeFactory.times(1)).refresh(businessDataList)
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun loadMorePagesTest() {
+        // Given
+        presenter.pageOffset = 7
+        val searchResponse = searchResponse(1)
+        val reviews = buildReviews(1)
+        val searchCall: retrofit2.Call<SearchResponse> = Calls.response(searchResponse)
+        val searchKey = "bla"
+        val reviewResponse: retrofit2.Call<Reviews> = Calls.response(reviews)
+        val businessDataList = buildBusinessDataList(searchResponse)
 
-//    @Test
-//    @Throws(Exception::class)
-//    fun loadFirstPageTest() {
-//        // Given
-//        val searchResponse = searchResponse(1)
-//        val reviews = buildReviews(1)
-//        val searchCall: retrofit2.Call<SearchResponse> = Calls.response(searchResponse)
-//        val searchKey = "bla"
-//        val reviewResponse: retrofit2.Call<Reviews> = Calls.response(reviews)
-//        val businessDataList = buildBusinessDataList(searchResponse)
-//
-//        Mockito.`when`(yelpFusionApi.getBusinessSearch(getSearchParams(searchKey))).thenReturn(searchCall)
-//        Mockito.`when`(yelpFusionApi.getBusinessReviews(any(), eq("en_US"))).thenReturn(reviewResponse)
-//
-//        // When
-//        presenter.loadFirstPage(searchKey)
-//
-//        // Then
-//
-//        Mockito.verify(view, VerificationModeFactory.times(1)).showSpinner()
-//        Mockito.verify(view, VerificationModeFactory.times(1)).hideSpinner()
-//        Mockito.verify(view, VerificationModeFactory.times(1)).refresh(businessDataList)
-//    }
-//    @Test
-//    @Throws(Exception::class)
-//    fun loadFirstPage() {
-//        // Given
-//        val productList: ProductList = createProductList(15)
-//        Mockito.`when`(apiService.getProducts(1, 15)).thenReturn(Flowable.just(productList))
-//
-//        // When
-//        presenter.start()
-//
-//        // Then
-//        Mockito.verify<Any?>(view, VerificationModeFactory.times(1)).showSpinner()
-//        Mockito.verify<Any?>(view, VerificationModeFactory.times(2)).hideSpinner()
-//        Mockito.verify<Any?>(disposable, VerificationModeFactory.times(1)).add(
-//            ArgumentMatchers.any(
-//                Disposable::class.java
-//            )
-//        )
-//        Mockito.verify<Any?>(view, VerificationModeFactory.times(1))
-//            .showProducts(productList.get())
-//        assertEquals(presenter.pageOffset, 2)
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun loadMoreProducts() {
-//        // Given
-//        val productList: ProductList = createProductList(15)
-//        presenter.pageOffset = 2
-//        Mockito.`when`(apiService.getProducts(presenter.pageOffset, 15))
-//            .thenReturn(Flowable.just(productList))
-//
-//        // When
-//        presenter.loadMorePages()
-//
-//        // Then
-//        Mockito.verify<Any>(disposable, VerificationModeFactory.times(1)).add(
-//            ArgumentMatchers.any(
-//                Disposable::class.java
-//            )
-//        )
-//        Mockito.verify<Any>(view, VerificationModeFactory.times(1))
-//            .showProducts(productList.get())
-//        assertEquals(presenter.pageOffset, 3)
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun pullToRefresh() {
-//        // Given
-//        val productList: ProductList = createProductList(15)
-//        Mockito.`when`(apiService.getProducts(1, 15)).thenReturn(Flowable.just(productList))
-//        Mockito.`when`(view.isRefreshing()).thenReturn(true)
-//        // When
-//        presenter.start()
-//
-//        // Then
-//        Mockito.verify<Any?>(view, VerificationModeFactory.times(1)).showSpinner()
-//        Mockito.verify<Any?>(view, VerificationModeFactory.times(2)).hideSpinner()
-//        Mockito.verify<Any?>(view, VerificationModeFactory.times(1))
-//            .refresh(productList.get())
-//        assertEquals(presenter.pageOffset, 2)
-//    }
+        Mockito.`when`(yelpFusionApi.getBusinessSearch(getSearchParams(searchKey))).thenReturn(searchCall)
+        Mockito.`when`(yelpFusionApi.getBusinessReviews(any(), eq("en_US"))).thenReturn(reviewResponse)
+
+        // When
+        presenter.loadMorePages(searchKey)
+
+        // Then
+
+        Mockito.verify(view, VerificationModeFactory.times(1)).showSpinner()
+        Mockito.verify(view, VerificationModeFactory.times(1)).hideSpinner()
+        Mockito.verify(view, VerificationModeFactory.times(1)).showBusiness(businessDataList)
+    }
 
     // region private
-//    private fun createEmptyList(): ProductList {
-//        val emptyList: List<BusinessData> = emptyList()
-//        val emptyProductList = ProductList()
-//        emptyProductList.setProducts(emptyList)
-//        return emptyProductList
-//    }
-//
-//    private fun createProductList(size: Int): ProductList {
-//        val products: List<BusinessData> = createProducts(size)
-//        val emptyProductList = ProductList()
-//        emptyProductList.setProducts(products)
-//        return emptyProductList
-//    }
-//
     private fun buildBusinessDataList(response: SearchResponse): List<BusinessData> {
         val businesses: List<Business> = response.businesses
         val results: MutableList<BusinessData> = mutableListOf()
@@ -196,8 +144,8 @@ class BusinessListPresenterTest {
     private fun getSearchParams(searchKey: String): MutableMap<String, String>? {
         val params: MutableMap<String, String> = HashMap()
         params.put("term", searchKey)
-        params.put("latitude", "40.581140")
-        params.put("longitude", "-111.914184")
+        params.put("latitude", "34.068921")
+        params.put("longitude", "-118.4451811")
         params.put("offset", presenter.pageOffset.toString())
 
         return params
@@ -215,6 +163,7 @@ class BusinessListPresenterTest {
         val searchResponse = SearchResponse()
         val businessList = businessList(size)
         searchResponse.businesses = businessList as java.util.ArrayList<Business>
+        searchResponse.total = size
         return searchResponse
     }
 
