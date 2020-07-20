@@ -63,6 +63,14 @@
 
     </style>
 
+    <style name="Item.review" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/medium_dark_grey</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">2dp</item>

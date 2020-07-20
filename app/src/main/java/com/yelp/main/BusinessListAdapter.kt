@@ -50,20 +50,18 @@ class BusinessListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     // endregion
     // region item View holder
-    internal inner class ItemViewHolder(binding: ViewProductListItemBinding) :
-        RecyclerView.ViewHolder(binding.getRoot()) {
-        private val binding: ViewProductListItemBinding
+    internal inner class ItemViewHolder(private val binding: ViewProductListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun onBind(position: Int) {
-            val product: BusinessData = businessList[position]
-            val imageUrl: String = product.imageUrl
+            val businessData: BusinessData = businessList[position]
+            val imageUrl: String = businessData.imageUrl
             binding.image.setImageURI(imageUrl)
-            binding.name.text = product.name
-            binding.price.text = product.getReview()
+            binding.name.text = businessData.name
+            binding.desc.text = "Category:  ${businessData.description}"
+            binding.rating.text = "Ratings: ${businessData.rating}"
+            binding.review.text = businessData.getReview()
         }
 
-        init {
-            this.binding = binding
-        }
     } // endregion
 
 }

@@ -154,10 +154,15 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
 
 
     override fun refresh(businessList: List<BusinessData>) {
-        pullToRefresh.isRefreshing = false
-        adapter.refresh(businessList)
+
         errContainer.visibility = View.GONE
         searchContainer.visibility = View.GONE
+        list.visibility = View.VISIBLE
+        showBackButton(true)
+        Timber.e("Refresh Data Size: " + businessList.size)
+
+        adapter.refresh(businessList)
+        pullToRefresh.isRefreshing = false
     }
 
     override var isRefreshing = false

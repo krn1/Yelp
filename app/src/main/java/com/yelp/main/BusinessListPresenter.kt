@@ -75,7 +75,7 @@ class BusinessListPresenter @Inject internal constructor(
                         val businessData = BusinessData(
                             business.id,
                             business.name,
-                            business.location.address1,
+                            business.categories[0].title,
                             business.imageUrl,
                             business.rating
                         )
@@ -135,20 +135,20 @@ class BusinessListPresenter @Inject internal constructor(
 
     private fun onRetrieveComplete(businessList: List<BusinessData>) {
         view.hideSpinner()
-        if (pageOffset <= 5 && businessList.isNullOrEmpty()) {
+        if (pageOffset <= PAGE_SIZE && businessList.isNullOrEmpty()) {
             view.showError(null)
             return
-        } else{
-            view.showError(null)
         }
-        if (view.isRefreshing) {
+
+        if (view.isRefreshing || pageOffset <= PAGE_SIZE) {
+
             view.refresh(businessList)
         } else {
             view.showBusiness(businessList)
         }
 
         // increment the pageOffset
-        pageOffset+= PAGE_SIZE
+        pageOffset += PAGE_SIZE
     }
 
 }

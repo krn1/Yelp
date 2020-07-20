@@ -13,7 +13,7 @@
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/image"
             android:layout_width="85dp"
-            android:layout_height="65dp"
+            android:layout_height="75dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,25 +32,59 @@
             android:paddingEnd="10dp"
             android:scrollHorizontally="false"
             android:textAlignment="gravity"
-            app:layout_constraintBottom_toTopOf="@+id/price"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/image"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/image"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="@string/app_name" />
 
         <TextView
-            android:id="@+id/price"
-            style="@style/Item.normal"
+            android:id="@+id/desc"
+            style="@style/Item.body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
             android:paddingStart="10dp"
             android:paddingEnd="5dp"
-            app:layout_constraintBottom_toTopOf="@+id/divider"
+            android:textSize="13sp"
+            android:textColor="@color/medium_dark_grey"
             app:layout_constraintStart_toStartOf="@id/name"
             app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="@string/app_name" />
+
+        <TextView
+            android:id="@+id/rating"
+            style="@style/Item.normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:ellipsize="start"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:singleLine="true"
+            android:textColor="@color/darker_grey"
+            android:textStyle="bold"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/desc"
+            app:layout_constraintTop_toTopOf="@+id/desc"
+            tools:text="@string/app_name" />
+
+        <TextView
+            android:id="@+id/review"
+            style="@style/Item.review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="5dp"
+            app:layout_constraintBottom_toTopOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="@id/desc"
+            app:layout_constraintTop_toBottomOf="@id/desc" />
+
 
         <View
             android:id="@+id/divider"
@@ -58,7 +92,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image" />
+            app:layout_constraintTop_toBottomOf="@id/review" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
