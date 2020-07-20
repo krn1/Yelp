@@ -10,6 +10,7 @@ internal interface BusinessListContract {
         fun refresh(businessList: List<BusinessData>)
         var isRefreshing: Boolean
         fun showError(message: String?)
+        fun showListEndedError()
         fun showNetError()
     }
 

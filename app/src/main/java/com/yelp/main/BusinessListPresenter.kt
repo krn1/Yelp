@@ -15,23 +15,21 @@ import javax.inject.Inject
 
 @PerActivity
 class BusinessListPresenter @Inject internal constructor(
-    view: BusinessListContract.View,
+    private val view: BusinessListContract.View,
     apiService: YelpFusionApi
 ) : BusinessListContract.Presenter {
-    private val view: BusinessListContract.View
     private val yelpFusionApi: YelpFusionApi
 
     @VisibleForTesting
-    var pageOffset = 50
+    var pageOffset = 5
 
     init {
-        this.view = view
         this.yelpFusionApi = apiService
     }
 
     companion object {
         @VisibleForTesting
-        private val PAGE_SIZE = 15
+        private val PAGE_SIZE = 5
     }
 
     // region override
@@ -56,7 +54,7 @@ class BusinessListPresenter @Inject internal constructor(
         params.put("term", searchParam)
         params.put("latitude", "40.581140")
         params.put("longitude", "-111.914184")
-        params.put("limit", pageOffset.toString())
+        params.put("offset", pageOffset.toString())
 
         val call: Call<SearchResponse> = yelpFusionApi.getBusinessSearch(params)
 
@@ -70,11 +68,6 @@ class BusinessListPresenter @Inject internal constructor(
                     val businesses: List<Business> = searchResponse.businesses
 
                     view.hideSpinner()
-                    if (businesses.isNullOrEmpty()) {
-                        Timber.e("Business Result empty ??: " + businesses.size)
-                        view.showError("")
-                        return
-                    }
 
                     Timber.d("Business Result Size: " + businesses.size)
                     val results: MutableList<BusinessData> = mutableListOf()
@@ -90,7 +83,7 @@ class BusinessListPresenter @Inject internal constructor(
                         results.add(businessData)
                     }
 
-                    view.showBusiness(results)
+                    onRetrieveComplete(results)
                 }
 
                 override fun onFailure(
@@ -139,4 +132,23 @@ class BusinessListPresenter @Inject internal constructor(
         }
         call.enqueue(callback)
     }
+
+    private fun onRetrieveComplete(businessList: List<BusinessData>) {
+        view.hideSpinner()
+        if (pageOffset <= 5 && businessList.isNullOrEmpty()) {
+            view.showError(null)
+            return
+        } else{
+            view.showError(null)
+        }
+        if (view.isRefreshing) {
+            view.refresh(businessList)
+        } else {
+            view.showBusiness(businessList)
+        }
+
+        // increment the pageOffset
+        pageOffset+= PAGE_SIZE
+    }
+
 }

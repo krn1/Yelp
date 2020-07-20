@@ -15,4 +15,13 @@ object AlertUtil {
         toast!!.setGravity(Gravity.BOTTOM, 0, 200)
         toast!!.show()
     }
+
+    fun toastUserLong(context: Context?, message: String?) {
+        if (message == null || message.isEmpty()) {
+            return
+        }
+        toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
+        toast!!.setGravity(Gravity.BOTTOM, 0, 200)
+        toast!!.show()
+    }
 }

@@ -10,4 +10,5 @@
     <string name="location_la">Los Angeles</string>
     <string name="network_error">Something went wrong!! Check your internet connection </string>
     <string name="empty_list">Your search didn\'t return any result.. Please try again </string>
+    <string name="list_ended">These are the listed businesses available around your area (up to ~25 miles center radius). </string>
 </resources>

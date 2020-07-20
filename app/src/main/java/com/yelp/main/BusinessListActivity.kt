@@ -122,7 +122,7 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
     }
 
     private fun refreshFeed() {
-        pullToRefresh.setRefreshing(true)
+        pullToRefresh.isRefreshing = true
         pullToRefresh.postDelayed({ presenter.loadFirstPage(search) }, 1000)
     }
 
@@ -144,6 +144,9 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
         showBackButton(true)
 
         Timber.e("Business Data Size: " + businessList.size)
+        if (businessList.isEmpty()) {
+            showListEndedError()
+        }
         adapter.loadPage(businessList)
         pullToRefresh.isRefreshing = false
 
@@ -161,12 +164,18 @@ class BusinessListActivity : AppCompatActivity(), BusinessListContract.View {
 
     override fun showError(message: String?) {
         errContainer.visibility = View.VISIBLE
+        searchContainer.visibility = View.VISIBLE
+        list.visibility = View.GONE
 
         if (message.isNullOrBlank()) {
             errorText.text = getString(R.string.empty_list)
         } else {
             errorText.text = message
         }
+    }
+
+    override fun showListEndedError() {
+        AlertUtil.toastUserLong(this, getString(R.string.list_ended))
     }
 
     override fun showNetError() {
